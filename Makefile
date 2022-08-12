@@ -1,5 +1,5 @@
 run:
-	go run main.go
+	go run ./pkg/cmd/main.go
 
 test:
 	go test ./...
