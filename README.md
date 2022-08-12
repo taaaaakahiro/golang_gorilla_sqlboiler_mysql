@@ -14,3 +14,14 @@
     - https://github.com/grpc/grpc-go  
     - https://dev.classmethod.jp/articles/golang-grpc-sample-project/  
 
+## sqlboiler
+    1. path  
+    ```
+    export GOPATH=$HOME/go;
+    export PATH=$PATH:$GOPATH/bin;
+    ```
+    2. command  
+    ```
+    sqlboiler mysql -c sqlboiler.toml -o models --no-tests
+    ```
+
