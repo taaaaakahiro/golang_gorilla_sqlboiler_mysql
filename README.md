@@ -1,4 +1,4 @@
-# go_gorilla_grpc_sqlboiler
+# go-gorilla-sqlboiler-mysql
 
 ## Article
  - gorilla  
@@ -17,11 +17,11 @@
 ## sqlboiler
     1. path  
     ```
-    export GOPATH=$HOME/go;
-    export PATH=$PATH:$GOPATH/bin;
+    $ export GOPATH=$HOME/go;
+    $ export PATH=$PATH:$GOPATH/bin;
     ```
     2. command  
     ```
-    sqlboiler mysql -c sqlboiler.toml -o models --no-tests
+    $ sqlboiler mysql -c sqlboiler/sqlboiler.toml -o models --no-tests
     ```
 
