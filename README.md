@@ -22,6 +22,6 @@
     ```
     2. command  
     ```
-    $ sqlboiler mysql -c sqlboiler/sqlboiler.toml -o models --no-tests
+    $ sqlboiler mysql -c sqlboiler/sqlboiler.toml -o pkg/models --no-tests
     ```
 
