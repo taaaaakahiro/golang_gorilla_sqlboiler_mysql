@@ -1,6 +1,6 @@
 # go_gorilla_grpc_sqlboiler
 
-## Artilcle
+## Article
  - gorilla  
     - https://github.com/gorilla/mux  
     - https://qiita.com/gold-kou/items/99507d33b8f8ddd96e3a  
