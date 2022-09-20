@@ -2,42 +2,24 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
-	"os"
+	"strconv"
 
-	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/gorilla/mux"
-	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/models"
+	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/config"
+	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/server"
 )
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage!")
-	fmt.Println("Endpoint Hit: homePage")
-}
-
 func main() {
-	db, err := sql.Open("mysql", os.Getenv("MYSQL_DSN"))
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
 	ctx := context.Background()
-
-	user, err := models.FindUser(ctx, db, 1)
+	cfg, err := config.LoadConfig(ctx)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatalf("failed to load config: %s", err)
 	}
-	fmt.Println(user.ID)
-	fmt.Println(user.Name)
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler)
-	// r.HandleFunc("/products", ProductsHandler)
-	// r.HandleFunc("/articles", ArticlesHandler)
-	http.Handle("/", r)
+	port := fmt.Sprintf(":%s", strconv.Itoa(cfg.Port))
 
-	log.Fatal(http.ListenAndServe(":8082", nil))
+	err = server.NewServer(port)
+
+	log.Fatal(err)
 }
