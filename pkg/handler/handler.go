@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"context"
+
 	v1 "github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/handler/v1"
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/persistence"
 	"go.uber.org/zap"
@@ -11,9 +13,9 @@ type Handler struct {
 	// Version *version.Handler
 }
 
-func NewHandler(logger *zap.Logger, repo *persistence.Repositories, ver string) *Handler {
+func NewHandler(ctx context.Context, logger *zap.Logger, repo *persistence.Repositories, ver string) *Handler {
 	h := &Handler{
-		V1: v1.NewHandler(logger.Named("v1"), repo),
+		V1: v1.NewHandler(ctx, logger.Named("v1"), repo),
 		// Version: version.NewHandler(logger.Named("version"), ver),
 	}
 

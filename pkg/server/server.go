@@ -24,9 +24,9 @@ type Server struct {
 	MuxGorilla *mux.Router
 }
 
-func NewServer(registry *handler.Handler, cfg *Config) *Server {
+func NewServer(ctx context.Context, registry *handler.Handler, cfg *Config) *Server {
 	s := &Server{
-		// Mux:        http.NewServeMux(),
+		Mux:        http.NewServeMux(),
 		handler:    registry,
 		MuxGorilla: mux.NewRouter(),
 	}
@@ -35,7 +35,7 @@ func NewServer(registry *handler.Handler, cfg *Config) *Server {
 			s.log = log
 		}
 	}
-	s.registerHandler()
+	s.registerHandler(ctx)
 	return s
 }
 
@@ -55,10 +55,10 @@ func (s *Server) GracefulShutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *Server) registerHandler() {
+func (s *Server) registerHandler(ctx context.Context) {
 	// rest api
 	// net/httpの場合
-	// s.Mux.Handle("/user/list", s.handler.V1.GetUsers())
+	s.Mux.Handle("/user/list", s.handler.V1.GetUsers(ctx))
 	// s.Mux.Handle("/message/list/", s.handler.V1.GetMessages())
 
 	// common

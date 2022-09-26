@@ -1,15 +1,16 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
 	"go.uber.org/zap"
 )
 
-func (h *Handler) GetUsers() http.Handler {
+func (h *Handler) GetUsers(ctx context.Context) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		users, err := h.repo.User.ListUsers()
+		users, err := h.repo.User.ListUsers(ctx)
 		if err != nil {
 			msg := "failed to get user"
 			http.Error(w, msg, http.StatusInternalServerError)
@@ -26,6 +27,5 @@ func (h *Handler) GetUsers() http.Handler {
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(b)
-		return
 	})
 }

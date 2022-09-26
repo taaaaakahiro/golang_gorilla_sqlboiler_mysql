@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"database/sql"
 	"log"
 
@@ -8,50 +9,34 @@ import (
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/domain/entity"
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/domain/repository"
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/io"
+	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/models"
 )
 
 type UserRepo struct {
 	database *io.SQLDatabase
+	dbOpen   *sql.DB
 }
 
 var _ repository.IUserRepository = (*UserRepo)(nil)
 
-func NewUserRepository(db *io.SQLDatabase) *UserRepo {
+func NewUserRepository(db *io.SQLDatabase, dbOpen *sql.DB) *UserRepo {
 	return &UserRepo{
 		database: db,
+		dbOpen:   dbOpen,
 	}
 }
 
-func (r UserRepo) ListUsers() ([]entity.User, error) {
-	query := "SELECT id, name FROM users ORDER BY id DESC"
-	stmtOut, err := r.database.Prepare(query)
+func (r UserRepo) ListUsers(ctx context.Context) (*[]*entity.User, error) {
+	modelUsers, err := models.Users().All(ctx, r.dbOpen)
 	if err != nil {
 		return nil, errs.WithStack(err)
 	}
-	defer stmtOut.Close()
-
-	rows, err := stmtOut.Query()
-	if err != nil {
-		return nil, errs.WithStack(err)
+	var users []*entity.User
+	for _, modelUser := range modelUsers {
+		users = append(users, &entity.User{Id: int(modelUser.ID), Name: modelUser.Name})
 	}
 
-	users := make([]entity.User, 0)
-	// Fetch rows
-	for rows.Next() {
-		// get RawBytes from data
-		user := entity.User{}
-
-		err = rows.Scan(&user.Id, &user.Name)
-		if err != nil {
-			return nil, errs.WithStack(err)
-		}
-
-		users = append(users, user)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return users, nil
+	return &users, nil
 }
 
 func (r UserRepo) User(userId int) (entity.User, error) {

@@ -20,27 +20,27 @@ type SQLDatabase struct {
 	database *sql.DB
 }
 
-func NewDatabase(setting MySQLSettings) (*SQLDatabase, error) {
+func NewDatabase(setting MySQLSettings) (*SQLDatabase, *sql.DB, error) {
 	db, err := sql.Open("mysql", setting.DSN())
 	if err != nil {
-		return nil, errs.WithStack(err)
+		return nil, nil, errs.WithStack(err)
 	}
 
 	// check config
 	if setting.MaxOpenConns() <= 0 {
-		return nil, errs.WithStack(errs.New("require set max open conns"))
+		return nil, nil, errs.WithStack(errs.New("require set max open conns"))
 	}
 	if setting.MaxIdleConns() <= 0 {
-		return nil, errs.WithStack(errs.New("require set max idle conns"))
+		return nil, nil, errs.WithStack(errs.New("require set max idle conns"))
 	}
 	if setting.ConnsMaxLifetime() <= 0 {
-		return nil, errs.WithStack(errs.New("require set conns max lifetime"))
+		return nil, nil, errs.WithStack(errs.New("require set conns max lifetime"))
 	}
 	db.SetMaxOpenConns(setting.MaxOpenConns())
 	db.SetMaxIdleConns(setting.MaxIdleConns())
 	db.SetConnMaxLifetime(time.Duration(setting.ConnsMaxLifetime()) * time.Second)
 
-	return &SQLDatabase{database: db}, nil
+	return &SQLDatabase{database: db}, db, nil
 }
 
 func (d *SQLDatabase) Begin() (*sql.Tx, context.CancelFunc, error) {
