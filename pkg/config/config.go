@@ -29,5 +29,5 @@ func LoadConfig(ctx context.Context) (*Config, error) {
 }
 
 func (cfg *Config) Address() string {
-	return fmt.Sprintf(":%d", cfg.Port)
+	return fmt.Sprintf("localhost:%d", cfg.Port)
 }

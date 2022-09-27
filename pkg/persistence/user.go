@@ -26,17 +26,17 @@ func NewUserRepository(db *io.SQLDatabase, dbOpen *sql.DB) *UserRepo {
 	}
 }
 
-func (r UserRepo) ListUsers(ctx context.Context) (*[]*entity.User, error) {
+func (r UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	modelUsers, err := models.Users().All(ctx, r.dbOpen)
 	if err != nil {
-		return nil, errs.WithStack(err)
+		return []*entity.User{}, errs.WithStack(err)
 	}
 	var users []*entity.User
 	for _, modelUser := range modelUsers {
 		users = append(users, &entity.User{Id: int(modelUser.ID), Name: modelUser.Name})
 	}
 
-	return &users, nil
+	return users, nil
 }
 
 func (r UserRepo) User(userId int) (entity.User, error) {

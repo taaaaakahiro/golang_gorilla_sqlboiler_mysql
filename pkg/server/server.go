@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net"
 	"net/http"
 
@@ -56,18 +58,24 @@ func (s *Server) GracefulShutdown(ctx context.Context) error {
 }
 
 func (s *Server) registerHandler(ctx context.Context) {
-	// rest api
-	// net/httpの場合
-	s.Mux.Handle("/user/list", s.handler.V1.GetUsers(ctx))
-	// s.Mux.Handle("/message/list/", s.handler.V1.GetMessages())
+	// rest api × gorilla
+	s.MuxGorilla.HandleFunc("/example", func(w http.ResponseWriter, r *http.Request) {
+		// an example API handler
+		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	})
+	s.MuxGorilla.HandleFunc("/user/list", s.handler.V1.GetUsers).Methods("GET")   // GET Only Case1
+	s.MuxGorilla.HandleFunc("/review/list", s.handler.V1.GetReviews).GetMethods() // GET Only Case2
 
 	// common
-	// s.Mux.Handle("/healthz", s.healthCheckHandler())
-	// s.Mux.Handle("/version", s.handler.Version.GetVersion())
+	s.MuxGorilla.HandleFunc("/healthz", s.healthCheckHandler)
+	s.MuxGorilla.HandleFunc("/version", s.handler.Version.GetVersion)
 }
 
-func (s *Server) healthCheckHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+func (s *Server) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	b, err := json.Marshal(http.StatusOK)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Write(b)
 }
