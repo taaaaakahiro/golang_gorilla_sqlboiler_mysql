@@ -7,6 +7,7 @@ import (
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/domain/repository"
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/io"
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/models"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
 type ReviewRepository struct {
@@ -26,6 +27,19 @@ func (r *ReviewRepository) ListReviews(ctx context.Context) ([]*models.Review, e
 	reviews, err := models.Reviews().All(ctx, r.dbOpen)
 	if err != nil {
 		return []*models.Review{}, err
+	}
+	return reviews, nil
+}
+
+func (r *ReviewRepository) GetReview(ctx context.Context, reviewID string) (*models.Review, error) {
+	// CASE1
+	// id, _ := strconv.ParseInt(reviewID, 10, 64)
+	// reviews, err := models.FindReview(ctx, r.dbOpen, id)
+
+	//CASE2
+	reviews, err := models.Reviews(qm.Where("id = ?", reviewID)).One(ctx, r.dbOpen)
+	if err != nil {
+		return &models.Review{}, err
 	}
 	return reviews, nil
 }

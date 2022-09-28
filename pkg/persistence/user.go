@@ -33,7 +33,7 @@ func (r *UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	}
 	var users []*entity.User
 	for _, modelUser := range modelUsers {
-		users = append(users, &entity.User{Id: int(modelUser.ID), Name: modelUser.Name})
+		users = append(users, &entity.User{ID: int(modelUser.ID), Name: modelUser.Name})
 	}
 
 	return users, nil
@@ -49,7 +49,7 @@ func (r *UserRepo) GetUser(userID string) (entity.User, error) {
 	}
 	defer stmtOut.Close()
 
-	err = stmtOut.QueryRow(userID).Scan(&user.Id, &user.Name)
+	err = stmtOut.QueryRow(userID).Scan(&user.ID, &user.Name)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:

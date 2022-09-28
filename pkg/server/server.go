@@ -65,7 +65,8 @@ func (s *Server) registerHandler(ctx context.Context) {
 	})
 	s.MuxGorilla.HandleFunc("/user/list", s.handler.V1.ListUsers).Methods("GET") // GET request
 	s.MuxGorilla.HandleFunc("/user/{id}", s.handler.V1.GetUser).Methods("GET")   // GET request
-	s.MuxGorilla.HandleFunc("/review/list", s.handler.V1.GetReviews).GetMethods()
+	s.MuxGorilla.HandleFunc("/review/list", s.handler.V1.ListReviews).GetMethods()
+	s.MuxGorilla.HandleFunc("/review/{id}", s.handler.V1.GetReview).GetMethods()
 
 	// common
 	s.MuxGorilla.HandleFunc("/healthz", s.healthCheckHandler)

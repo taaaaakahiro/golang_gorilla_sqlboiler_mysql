@@ -9,4 +9,5 @@ import (
 // use case models created by sqlboiler
 type IReviewRepository interface {
 	ListReviews(ctx context.Context) ([]*models.Review, error)
+	GetReview(ctx context.Context, reviewID string) (*models.Review, error)
 }
