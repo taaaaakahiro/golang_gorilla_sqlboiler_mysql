@@ -26,7 +26,7 @@ func NewUserRepository(db *io.SQLDatabase, dbOpen *sql.DB) *UserRepo {
 	}
 }
 
-func (r UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
+func (r *UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	modelUsers, err := models.Users().All(ctx, r.dbOpen)
 	if err != nil {
 		return []*entity.User{}, errs.WithStack(err)
@@ -39,17 +39,17 @@ func (r UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	return users, nil
 }
 
-func (r UserRepo) User(userId int) (entity.User, error) {
+func (r *UserRepo) GetUser(userID string) (entity.User, error) {
 	user := entity.User{}
 
-	query := "SELECT id, name FROM user WHERE id = ?"
+	query := "SELECT id, name FROM users WHERE id = ?"
 	stmtOut, err := r.database.Prepare(query)
 	if err != nil {
 		return user, err
 	}
 	defer stmtOut.Close()
 
-	err = stmtOut.QueryRow(userId).Scan(&user.Id, &user.Name)
+	err = stmtOut.QueryRow(userID).Scan(&user.Id, &user.Name)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:

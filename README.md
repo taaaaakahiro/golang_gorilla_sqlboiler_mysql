@@ -1,5 +1,13 @@
 # go-gorilla-sqlboiler-mysql
 
+## HTTP Request List
+```
+$ curl -X GET http://localhost:8082/user/{id}
+$ curl -X GET http://localhost:8082/user/list
+$ curl -X GET http://localhost:8082/review/list
+$ curl -X GET http://localhost:8082/review/{id}
+```
+
 ## Article
  - gorilla  
     - https://github.com/gorilla/mux  

@@ -2,12 +2,14 @@ package v1
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 )
 
-func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.repo.User.ListUsers(h.ctx)
 	if err != nil {
 		msg := "failed to get user"
@@ -26,4 +28,18 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(b)
 
+}
+
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	user, err := h.repo.User.GetUser(vars["id"])
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, err := json.Marshal(user)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
 }

@@ -63,8 +63,9 @@ func (s *Server) registerHandler(ctx context.Context) {
 		// an example API handler
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 	})
-	s.MuxGorilla.HandleFunc("/user/list", s.handler.V1.GetUsers).Methods("GET")   // GET Only Case1
-	s.MuxGorilla.HandleFunc("/review/list", s.handler.V1.GetReviews).GetMethods() // GET Only Case2
+	s.MuxGorilla.HandleFunc("/user/list", s.handler.V1.ListUsers).Methods("GET") // GET request
+	s.MuxGorilla.HandleFunc("/user/{id}", s.handler.V1.GetUser).Methods("GET")   // GET request
+	s.MuxGorilla.HandleFunc("/review/list", s.handler.V1.GetReviews).GetMethods()
 
 	// common
 	s.MuxGorilla.HandleFunc("/healthz", s.healthCheckHandler)

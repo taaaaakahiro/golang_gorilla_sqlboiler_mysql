@@ -9,5 +9,5 @@ import (
 // use case entity
 type IUserRepository interface {
 	ListUsers(ctx context.Context) ([]*entity.User, error)
-	User(userId int) (entity.User, error)
+	GetUser(userID string) (entity.User, error)
 }

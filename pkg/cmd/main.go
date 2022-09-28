@@ -78,7 +78,6 @@ func run(ctx context.Context) int {
 	httpServer := server.NewServer(ctx, registry, &server.Config{Log: logger})
 
 	// サーバ設定
-
 	srv := &http.Server{
 		Handler:      httpServer.MuxGorilla,
 		Addr:         cfg.Address(),
