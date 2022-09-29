@@ -24,7 +24,7 @@ func NewReviewRepository(db *io.SQLDatabase, dbOpen *sql.DB) *ReviewRepository {
 	}
 }
 func (r *ReviewRepository) ListReviews(ctx context.Context) ([]*models.Review, error) {
-	reviews, err := models.Reviews().All(ctx, r.dbOpen)
+	reviews, err := models.Reviews(qm.Select("id", "text")).All(ctx, r.dbOpen)
 	if err != nil {
 		return []*models.Review{}, err
 	}
