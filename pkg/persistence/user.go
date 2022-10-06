@@ -12,21 +12,20 @@ import (
 	"github.com/taaaaakahiro/go_gorilla_grpc_sqlboiler/pkg/models"
 )
 
-type UserRepo struct {
+type UserRepository struct {
 	database *io.SQLDatabase
 	dbOpen   *sql.DB
 }
 
-var _ repository.IUserRepository = (*UserRepo)(nil)
+var _ repository.IUserRepository = (*UserRepository)(nil)
 
-func NewUserRepository(db *io.SQLDatabase, dbOpen *sql.DB) *UserRepo {
-	return &UserRepo{
+func NewUserRepository(db *io.SQLDatabase) *UserRepository {
+	return &UserRepository{
 		database: db,
-		dbOpen:   dbOpen,
 	}
 }
 
-func (r *UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
+func (r *UserRepository) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	modelUsers, err := models.Users().All(ctx, r.dbOpen)
 	if err != nil {
 		return []*entity.User{}, errs.WithStack(err)
@@ -39,7 +38,7 @@ func (r *UserRepo) ListUsers(ctx context.Context) ([]*entity.User, error) {
 	return users, nil
 }
 
-func (r *UserRepo) GetUser(userID string) (entity.User, error) {
+func (r *UserRepository) GetUser(userID string) (entity.User, error) {
 	user := entity.User{}
 
 	query := "SELECT id, name FROM users WHERE id = ?"

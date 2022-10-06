@@ -63,13 +63,13 @@ func run(ctx context.Context) int {
 		SqlConnsMaxLifetime: cfg.DB.ConnsMaxLifetime,
 	}
 
-	mysqlDatabase, dbOpen, err := io.NewDatabase(sqlSetting)
+	mysqlDatabase, err := io.NewDatabase(sqlSetting)
 	if err != nil {
 		logger.Error("failed to create mysql db repository", zap.Error(err), zap.String("DSN", cfg.DB.DSN))
 		return exitError
 	}
 
-	repositories, err := persistence.NewRepositories(mysqlDatabase, dbOpen)
+	repositories, err := persistence.NewRepositories(mysqlDatabase)
 	if err != nil {
 		logger.Error("failed to new repositories", zap.Error(err))
 		return exitError

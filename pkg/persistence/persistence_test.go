@@ -28,9 +28,9 @@ func TestMain(m *testing.M) {
 		SqlMaxIdleConns:     cfg.DB.MaxIdleConns,
 		SqlConnsMaxLifetime: cfg.DB.ConnsMaxLifetime,
 	}
-	db, dbOpen, _ := io.NewDatabase(sqlSetting)
+	db, _ := io.NewDatabase(sqlSetting)
 
-	reviewRepo = NewReviewRepository(db, dbOpen)
+	reviewRepo = NewReviewRepository(db)
 
 	res := m.Run()
 	// after

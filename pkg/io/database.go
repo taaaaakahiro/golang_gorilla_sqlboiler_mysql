@@ -17,35 +17,35 @@ type MySQLSettings interface {
 }
 
 type SQLDatabase struct {
-	database *sql.DB
+	Database *sql.DB
 }
 
-func NewDatabase(setting MySQLSettings) (*SQLDatabase, *sql.DB, error) {
+func NewDatabase(setting MySQLSettings) (*SQLDatabase, error) {
 	db, err := sql.Open("mysql", setting.DSN())
 	if err != nil {
-		return nil, nil, errs.WithStack(err)
+		return nil, errs.WithStack(err)
 	}
 
 	// check config
 	if setting.MaxOpenConns() <= 0 {
-		return nil, nil, errs.WithStack(errs.New("require set max open conns"))
+		return nil, errs.WithStack(errs.New("require set max open conns"))
 	}
 	if setting.MaxIdleConns() <= 0 {
-		return nil, nil, errs.WithStack(errs.New("require set max idle conns"))
+		return nil, errs.WithStack(errs.New("require set max idle conns"))
 	}
 	if setting.ConnsMaxLifetime() <= 0 {
-		return nil, nil, errs.WithStack(errs.New("require set conns max lifetime"))
+		return nil, errs.WithStack(errs.New("require set conns max lifetime"))
 	}
 	db.SetMaxOpenConns(setting.MaxOpenConns())
 	db.SetMaxIdleConns(setting.MaxIdleConns())
 	db.SetConnMaxLifetime(time.Duration(setting.ConnsMaxLifetime()) * time.Second)
 
-	return &SQLDatabase{database: db}, db, nil
+	return &SQLDatabase{Database: db}, nil
 }
 
 func (d *SQLDatabase) Begin() (*sql.Tx, context.CancelFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	tx, err := d.database.BeginTx(ctx, &sql.TxOptions{
+	tx, err := d.Database.BeginTx(ctx, &sql.TxOptions{
 		Isolation: 0,
 		ReadOnly:  false,
 	})
@@ -53,29 +53,29 @@ func (d *SQLDatabase) Begin() (*sql.Tx, context.CancelFunc, error) {
 }
 
 func (d *SQLDatabase) Close() error {
-	return d.database.Close()
+	return d.Database.Close()
 }
 
 func (d *SQLDatabase) Prepare(query string) (*sql.Stmt, error) {
-	if d.database == nil {
+	if d.Database == nil {
 		return nil, errDoesNotDB()
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt, err := d.database.PrepareContext(ctx, query)
+	stmt, err := d.Database.PrepareContext(ctx, query)
 
 	return stmt, err
 }
 
 func (d *SQLDatabase) Exec(query string, args ...interface{}) (sql.Result, error) {
-	if d.database == nil {
+	if d.Database == nil {
 		return nil, errDoesNotDB()
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	res, err := d.database.ExecContext(ctx, query, args)
+	res, err := d.Database.ExecContext(ctx, query, args)
 
 	return res, err
 }

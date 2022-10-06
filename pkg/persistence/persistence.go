@@ -8,13 +8,19 @@ import (
 )
 
 type Repositories struct {
+	db     *io.SQLDatabase
 	User   repository.IUserRepository
 	Review repository.IReviewRepository
 }
 
-func NewRepositories(db *io.SQLDatabase, dbOpen *sql.DB) (*Repositories, error) {
+func NewRepositories(db *io.SQLDatabase) (*Repositories, error) {
 	return &Repositories{
-		User:   NewUserRepository(db, dbOpen),
-		Review: NewReviewRepository(db, dbOpen),
+		db:     db,
+		User:   NewUserRepository(db),
+		Review: NewReviewRepository(db),
 	}, nil
+}
+
+func (r *Repositories) GetDatabase() *sql.DB {
+	return r.db.Database
 }
